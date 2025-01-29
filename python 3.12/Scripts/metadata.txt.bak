@@ -1,0 +1,5 @@
+column1|alphanumeric
+column2|alphanumeric
+column3|date(YYYY-MM-DD)
+column4|number
+column5|number

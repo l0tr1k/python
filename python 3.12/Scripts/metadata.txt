@@ -1,0 +1,5 @@
+column1|alphanumeric
+column2|alphanumeric
+column3|date(%Y-%m-%d)
+column4|number
+column5|number
