@@ -1,3 +1,6 @@
+#l0tr1k space fighting game 
+#version 1.0
+
 import pygame
 import random
 

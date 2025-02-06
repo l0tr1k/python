@@ -1,3 +1,5 @@
+#l0tr1k port scanner tool
+#version 1.0
 
 import socket
 import termcolor

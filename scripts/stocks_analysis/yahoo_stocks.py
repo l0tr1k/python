@@ -1,3 +1,6 @@
+#l0tr1k yahoo stocks analysis, take ticker and add current price and company inf
+#version 1.0
+
 import pandas as pd
 import yfinance as yf
 from datetime import datetime
