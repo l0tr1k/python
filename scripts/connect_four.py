@@ -4,22 +4,22 @@
 from turtle import *
 from freegames import line
 
-# Game state variables
-turns = {'red': 'yellow', 'yellow': 'red'}  # Player turn order
+# Game state variables - updated for 8x8 grid
+turns = {'red': 'yellow', 'yellow': 'red'}
 state = {
-    'player': 'yellow',  # Current player
-    'rows': [0] * 7,     # Number of discs in each column (7 columns total)
-    'board': [[None for _ in range(6)] for _ in range(7)],  # 7x6 board
-    'game_over': False   # Win state flag
+    'player': 'yellow',
+    'rows': [0] * 8,     # Changed to 8 columns
+    'board': [[None for _ in range(8)] for _ in range(8)],  # Changed to 8x8
+    'game_over': False
 }
 
 def grid():
     """Draw game grid using turtle graphics"""
     bgcolor('light blue')
-    # Draw vertical lines (columns)
-    for x in range(-150, 200, 50):
+    # Draw vertical lines for 8 columns
+    for x in range(-200, 200, 50):  # Adjusted range for 8 columns
         line(x, -200, x, 200)
-    # Draw empty circles (slots)
+    # Draw empty circles for 8x8 grid
     for x in range(-175, 200, 50):
         for y in range(-175, 200, 50):
             up()
@@ -28,37 +28,42 @@ def grid():
     update()
 
 def win_check(col, row, player):
-    """Check four possible winning directions"""
+    """Check four possible winning directions in 8x8 grid"""
     # Vertical check
-    if state['rows'][col] >= 4:
-        count = 0
-        for r in range(6):
-            if state['board'][col][r] == player:
-                count += 1
-                if count >= 4:
-                    return True
-            else:
-                count = 0  # Reset count when different color found
+    count = 0
+    for r in range(8):  # Changed to check 8 rows
+        if state['board'][col][r] == player:
+            count += 1
+            if count >= 4:
+                return True
+        else:
+            count = 0
     
     # Horizontal check
     consecutive = 0
-    for c in range(7):
+    for c in range(8):  # Changed to check 8 columns
         consecutive = consecutive + 1 if state['board'][c][row] == player else 0
         if consecutive >= 4:
             return True
     
-    # Diagonal checks
-    directions = [(1,1), (1,-1)]  # Down-right, Up-right
+    # Diagonal checks - fixed implementation
+    directions = [(1,1), (1,-1), (-1,1), (-1,-1)]  # All diagonal directions
     for dx, dy in directions:
-        count = 1
-        for i in range(1,4):
-            x, y = col + dx*i, row + dy*i
-            if 0 <= x < 7 and 0 <= y < 6:
-                if state['board'][x][y] == player:
-                    count +=1
-                else:
-                    break
-        if count >=4:
+        count = 1  # Start with 1 for current piece
+        # Check forward direction
+        x, y = col, row
+        for _ in range(3):  # Need 3 more pieces to win
+            x, y = x + dx, y + dy
+            if 0 <= x < 8 and 0 <= y < 8 and state['board'][x][y] == player:
+                count += 1
+            else:
+                break
+        # Check opposite direction
+        x, y = col - dx, row - dy
+        while 0 <= x < 8 and 0 <= y < 8 and state['board'][x][y] == player:
+            count += 1
+            x, y = x - dx, y - dy
+        if count >= 4:
             return True
     
     return False
@@ -66,13 +71,13 @@ def win_check(col, row, player):
 def tap(x, y):
     """Handle mouse click input"""
     if state['game_over']:
-        return  # Ignore input after game ends
+        return
     
     player = state['player']
-    col = int((x + 200) // 50)  # Convert click position to column index (0-6)
+    col = int((x + 200) // 50)
     
-    # Validate column
-    if col < 0 or col > 6 or state['rows'][col] >= 6:
+    # Validate column for 8x8 grid
+    if col < 0 or col > 7 or state['rows'][col] >= 8:  # Changed bounds to 7 and 8
         return
     
     # Place disc
@@ -87,7 +92,6 @@ def tap(x, y):
     state['board'][col][row] = player
     state['rows'][col] += 1
     
-    # Check win condition
     if win_check(col, row, player):
         state['game_over'] = True
         up()
@@ -97,8 +101,8 @@ def tap(x, y):
     else:
         state['player'] = turns[player]
 
-# Game initialization
-setup(420, 420, 370, 0)
+# Game initialization with larger window for 8x8 grid
+setup(470, 470, 370, 0)  # Increased window size
 hideturtle()
 tracer(False)
 grid()
