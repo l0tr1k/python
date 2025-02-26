@@ -4,11 +4,8 @@ from datetime import datetime
 
 # Konfigurácia
 INPUT_FILE = "stocks.xlsx"
-# Generovanie názvu súboru s aktuálnym dátumom a časom
-current_datetime = datetime.now().strftime("%Y%m%d_%H%M%S")
-OUTPUT_FILE = f"stocks_updated_{current_datetime}.xlsx"
-#OUTPUT_FILE = "stocks_updated.xlsx"
 SHEET_NAME = "Hárok1"
+OUTPUT_FILE = f"stocks_updated_{datetime.now().strftime("%Y%m%d_%H%M%S")}.xlsx"
 
 def get_yahoo_data(symbol):
     """Získa finančné údaje pre symbol z Yahoo Finance"""
@@ -18,21 +15,29 @@ def get_yahoo_data(symbol):
         history = ticker.history(period="1d")
         
         return {
-            'Aktuálna cena': info.get('currentPrice', history['Close'].iloc[0] if not history.empty else 'N/A'),
-            # Nové analytické odhady a odporúčania
+            'Aktuálna cena': info.get('currentPrice', history['Close'].iloc[-1] if not history.empty else 'N/A'),
+            'Odporúčanie': info.get('recommendationKey', 'N/A'),
             'Cieľová cena analytikov': info.get('targetMedianPrice', 'N/A'),
             'Počet analytikov': info.get('numberOfAnalystOpinions', 'N/A'),
-            'Odporúčanie': info.get('recommendationKey', 'N/A'),
-            'Forward P/E': info.get('forwardPE', 'N/A'),
-            'PEG Ratio': info.get('pegRatio', 'N/A'),
-            # Finančné odhady
+            '52 Week High': info.get('fiftyTwoWeekHigh', 'N/A'),
+            '52 Week Low': info.get('fiftyTwoWeekLow', 'N/A'),
             'P/E': info.get('trailingPE', 'N/A'),
+            'Forward P/E': info.get('forwardPE', 'N/A'),
             'EPS': info.get('trailingEps', 'N/A'),
-            '52WeekHigh': info.get('fiftyTwoWeekHigh', 'N/A'),
-            'Dividend Yield': info.get('dividendYield', 'N/A') * 100 if info.get('dividendYield') else 'N/A',
+            'PEG Ratio': info.get('pegRatio', 'N/A'),
             'Trhová kapitalizácia': info.get('marketCap', 'N/A'),
-            'EBITDA': info.get('ebitda', 'N/A'),
+            'Dividend Yield': info.get('dividendYield', 'N/A') * 100 if info.get('dividendYield') else 'N/A',
+            'Beta': info.get('beta', 'N/A'),
             'Výnosy TTM': info.get('totalRevenue', 'N/A'),
+            'Profit Margin': info.get('profitMargins', 'N/A'),
+            'Návratnosť vlastného kapitálu': info.get('returnOnEquity', 'N/A'),
+            'Návratnosť aktív': info.get('returnOnAssets', 'N/A'),
+            'Rast výnosov': info.get('revenueGrowth', 'N/A'),
+            'Rast zisku': info.get('earningsGrowth', 'N/A'),
+            'Celkový dlh': info.get('totalDebt', 'N/A'),
+            'Celková hotovosť': info.get('totalCash', 'N/A'),
+            'Free Cash Flow': info.get('freeCashflow', 'N/A'),
+            'EBITDA': info.get('ebitda', 'N/A'),
             'Posledná aktualizácia': datetime.now().strftime('%Y-%m-%d %H:%M')
         }
     except Exception as e:
