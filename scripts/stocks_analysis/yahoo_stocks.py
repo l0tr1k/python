@@ -1,13 +1,13 @@
-#l0tr1k yahoo stocks analysis, take ticker and add current price and company inf
-#version 1.0
-
 import pandas as pd
 import yfinance as yf
 from datetime import datetime
 
 # Konfigurácia
 INPUT_FILE = "stocks.xlsx"
-OUTPUT_FILE = "stocks_updated.xlsx"
+# Generovanie názvu súboru s aktuálnym dátumom a časom
+current_datetime = datetime.now().strftime("%Y%m%d_%H%M%S")
+OUTPUT_FILE = f"stocks_updated_{current_datetime}.xlsx"
+#OUTPUT_FILE = "stocks_updated.xlsx"
 SHEET_NAME = "Hárok1"
 
 def get_yahoo_data(symbol):
@@ -19,6 +19,13 @@ def get_yahoo_data(symbol):
         
         return {
             'Aktuálna cena': info.get('currentPrice', history['Close'].iloc[0] if not history.empty else 'N/A'),
+            # Nové analytické odhady a odporúčania
+            'Cieľová cena analytikov': info.get('targetMedianPrice', 'N/A'),
+            'Počet analytikov': info.get('numberOfAnalystOpinions', 'N/A'),
+            'Odporúčanie': info.get('recommendationKey', 'N/A'),
+            'Forward P/E': info.get('forwardPE', 'N/A'),
+            'PEG Ratio': info.get('pegRatio', 'N/A'),
+            # Finančné odhady
             'P/E': info.get('trailingPE', 'N/A'),
             'EPS': info.get('trailingEps', 'N/A'),
             '52WeekHigh': info.get('fiftyTwoWeekHigh', 'N/A'),
